@@ -12,8 +12,8 @@ source("R/functions.R", encoding = "UTF-8")
 
 # IMPORT DONNEES -----------------------------
 
-df <- readr::read_csv2(
-  "individu_reg.csv",
+df <- arrow::read_parquet(
+  "individu_reg.parquet",
   col_select = c("region", "aemm", "aged", "anai", "catl", "cs1", "cs2",
                  "cs3", "couple", "na38", "naf08", "pnai12", "sexe",
                  "surf", "tp", "trans", "ur")
@@ -44,7 +44,23 @@ df3 <- df %>%
   group_by(couple) %>%
   mutate(y = 100 * x / sum(x))
 
+stats_age <- df %>%
+  group_by(decennie = decennie_a_partir_annee(age)) %>%
+  summarise(n())
 
+table_age <- gt::gt(stats_age) %>%
+  gt::tab_header(
+    title = "Distribution des âges dans notre population"
+  ) %>%
+  gt::fmt_number(
+    columns = `n()`,
+    sep_mark = " ",
+    decimals = 0
+  ) %>%
+  gt::cols_label(
+    decennie = "Tranche d'âge",
+    `n()` = "Population"
+  )
 # GRAPHIQUES -----------------------------------
 
 ggplot(df) +
