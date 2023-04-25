@@ -50,3 +50,6 @@ rsconnect/
 
 #ajout jour2
 individu_reg.*
+
+#gestion des secrets
+secrets.yaml
